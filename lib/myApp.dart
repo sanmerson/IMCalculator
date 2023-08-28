@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:imcalculator/description.dart';
+import 'package:imcalculator/result.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -9,8 +10,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromARGB(255, 2, 208, 36)),
+        colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 2, 208, 36)),
         useMaterial3: true,
       ),
       home: const MyHomePage(title: 'IMCalculator'),
@@ -44,58 +45,92 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Column(
+        child: ListView(
           children: <Widget>[
             description,
             const Padding(
               padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
               child: Text(
+                textAlign: TextAlign.center,
                 "Calcule o seu IMC aqui!",
                 style: TextStyle(
                   fontSize: 20,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            Padding(
-              key: _formKey,
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Altura',
-                ),
-                controller: minhaAlturaInput,
-              ),
-            ),
+            Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0.0),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Altura',
+                        ),
+                        controller: minhaAlturaInput,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite a sua altura!";
+                          }
+                          if (!value.contains(',') && !value.contains('.')) {
+                            return "Adicione . ou ,";
+                          }
+
+                          return null;
+                        },
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Peso',
+                        ),
+                        controller: meuPesoInput,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return "Digite a seu peso!";
+                          }
+                          return null;
+                        },
+                      ),
+                    ),
+                  ],
+                )),
             Padding(
               padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 10.0),
-              child: TextFormField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Peso',
+              child: TextButton(
+                style: TextButton.styleFrom(
+                  fixedSize: const Size(220, 50),
+                  backgroundColor: const Color.fromARGB(255, 0, 99, 5),
                 ),
-                controller: meuPesoInput,
+                onPressed: () {
+                  setState(() {
+                    if (_formKey.currentState!.validate()) {
+                      minhaAltura = double.parse(
+                          minhaAlturaInput.text.replaceAll(',', '.'));
+
+                      meuPesoInput.text.contains(',')
+                          ? meuPeso = double.parse(
+                              meuPesoInput.text.replaceAll(',', '.'))
+                          : meuPeso = double.parse(meuPesoInput.text);
+
+                      imc = (meuPeso ~/ (minhaAltura * minhaAltura)).toInt();
+                    }
+                  });
+                },
+                child: const Text(
+                  'Calcular',
+                  style: TextStyle(color: Colors.white, fontSize: 18),
+                ),
               ),
             ),
-            TextButton(
-              style: TextButton.styleFrom(
-                fixedSize: const Size(220, 20),
-                backgroundColor: const Color.fromARGB(255, 0, 99, 5),
-              ),
-              onPressed: () {
-                setState(() {
-                  imc = (double.parse(meuPesoInput.text) ~/
-                          (double.parse(minhaAlturaInput.text) *
-                              double.parse(minhaAlturaInput.text)))
-                      .toInt();
-                });
-              },
-              child: const Text(
-                'Calcular',
-                style: TextStyle(color: Colors.white70, fontSize: 18),
-              ),
-            ),
-            Text('$imc')
+            imc != 0 ? Result(imc: imc.toString()) : Container()
           ],
         ),
       ),
