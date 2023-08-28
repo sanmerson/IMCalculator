@@ -40,6 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        titleTextStyle: const TextStyle(
+            fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black),
         centerTitle: true,
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
@@ -68,7 +70,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Altura',
+                          fillColor: Colors.black,
+                          labelText: 'Altura em Metros',
                         ),
                         controller: minhaAlturaInput,
                         validator: (value) {
@@ -89,7 +92,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: TextFormField(
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
-                          labelText: 'Peso',
+                          labelText: 'Peso em Kg',
                         ),
                         controller: meuPesoInput,
                         validator: (value) {
